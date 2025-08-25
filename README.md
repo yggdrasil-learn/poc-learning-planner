@@ -1,7 +1,7 @@
-# POC Learning Planner
+ :deciduous_tree: POC Learning Planner
 Initial POC chatbot application for learning planner
 
-## Set up virtual environment
+## :package: Set up virtual environment
 
 Windows:
 ```
@@ -19,19 +19,19 @@ source .venv/bin/activate
 uv sync --dev
 ```
 
-## Start up ollama LLM
+## :brain: Start up ollama LLM
 
 ```
 ollama run qwen3:0.6b
 ```
 
-## Launch streamlit application
+## :rocket: Launch streamlit application
 
 ```
 streamlit run src/Home.py
 ```
 
-## Code Analysis
+## :test_tube: Code Analysis
 
 ### Code complexity
 
