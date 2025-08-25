@@ -8,6 +8,7 @@ Windows:
 pip install uv
 uv venv
 .venv\Scripts\activate
+uv python install 3.12.10
 uv sync --dev
 ```
 
@@ -16,6 +17,7 @@ Mac/Linux:
 pip3 install uv
 uv venv
 source .venv/bin/activate
+uv python install 3.12.10
 uv sync --dev
 ```
 
