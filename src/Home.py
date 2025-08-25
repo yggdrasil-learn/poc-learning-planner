@@ -32,10 +32,12 @@ def main():
         st.session_state['messages'] = messages
         show_messages(chat_placeholder)
 
-        response: dict[str, Any] = agent.invoke(
-            {'question' : prompt},
-            {'configurable' : {'thread_id' : 1}}
-        )
+        with st.spinner('Thinking'):
+            response: dict[str, Any] = agent.invoke(
+                {'question' : prompt},
+                {'configurable' : {'thread_id' : 1}}
+            )
+
         answer: str = response['answer'].split('</think>')[1].strip()
         messages.append(('ai', answer))
         st.session_state['messages'] = messages
