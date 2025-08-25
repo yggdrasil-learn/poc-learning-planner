@@ -1,4 +1,4 @@
- :deciduous_tree: POC Learning Planner
+# :deciduous_tree: POC Learning Planner
 Initial POC chatbot application for learning planner
 
 ## :package: Set up virtual environment
