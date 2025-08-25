@@ -1,38 +1,65 @@
+from typing import Any
 from typing_extensions import TypedDict
 
+from langchain_core.messages.ai import AIMessage
+from langchain_core.prompt_values import PromptValue
 from langchain_core.prompts import PromptTemplate
 from langchain_ollama import ChatOllama
+from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph import StateGraph, START, END
+from langgraph.graph.state import CompiledStateGraph
 
-llm = ChatOllama(model = 'qwen3:0.6b')
+from config import CONFIG
+
+AGENT_CONFIG: dict[str, Any] = CONFIG['agent']
+llm: ChatOllama = ChatOllama(model = 'qwen3:0.6b')
 
 class State(TypedDict):
     question: str
     answer: str
+    input_tokens: int
+    output_tokens: int
 
-def answer_question(state: State):
+def answer_question(state: State) -> dict[str, Any]:
+    """
+    Answer the user's question
+
+    :param state: Current state of graph
+    :type state: State
+    :return: Answer with token usage
+    :rtype: dict[str, Any]
+    """
     
-    prompt = PromptTemplate(input_variables = ['question'],
-                            template = """
-                            You are a helpful AI assistant. Answer the user's question. Do NOT include any extra commentary.
+    prompt: PromptTemplate = PromptTemplate(
+        input_variables = ['question'],
+        template = AGENT_CONFIG['answer_question']['prompt']
+    )
+    messages: PromptValue = prompt.invoke({'question' : state['question']})
 
-                            ## Here is the user's question
-                            {question}
-                            """)
-    messages = prompt.invoke({'question' : state['question']})
+    response: AIMessage = llm.invoke(messages)
 
-    response = llm.invoke(messages)
-    print(response.usage_metadata)
+    results: dict[str, Any] = {
+        'answer' : response.content,
+        'input_tokens' : response.usage_metadata['input_tokens'],
+        'output_tokens' : response.usage_metadata['output_tokens']
+    }
 
-    return {'answer' : response.content}
+    return results
 
-def compile_agent():
+def compile_agent() -> CompiledStateGraph:
+    """
+    Compile agent
 
-    graph = StateGraph(State)
+    :return: Compiled agent
+    :rtype: CompiledStateGraph
+    """
+
+    memory: InMemorySaver = InMemorySaver()
+    graph: StateGraph = StateGraph(State)
 
     graph.add_node('answer_question', answer_question)
 
     graph.add_edge(START, 'answer_question')
     graph.add_edge('answer_question', END)
 
-    return graph.compile()
+    return graph.compile(checkpointer = memory)
