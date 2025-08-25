@@ -24,3 +24,36 @@ uv sync --dev
 ```
 ollama run qwen3:0.6b
 ```
+
+## Launch streamlit application
+
+```
+streamlit run src/Home.py
+```
+
+## Code Analysis
+
+### Code complexity
+
+```
+complexipy .
+```
+
+### Unit tests
+
+```
+pytest --log-file=pytest.log tests/
+```
+
+### Linting
+
+```
+ruff check --output-format concise -o ruff.log
+```
+
+### Type Checking
+
+```
+ty check --output-format concise . > ty.log
+```
+
